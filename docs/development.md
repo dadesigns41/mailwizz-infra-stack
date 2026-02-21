@@ -158,6 +158,101 @@ Or your configured dev domain.
 
 ---
 
+### Required Directory Permissions
+
+MailWizz requires write access to several directories.
+
+If permissions are not set correctly, you may see:
+- Blank pages
+- Asset errors
+- Runtime exceptions
+- Failed cache writes
+
+Run the following from the project root:
+
+```bash
+cd web/
+
+chmod 0777 apps/common/config/
+chmod 0777 backend/assets/cache/
+chmod 0777 customer/assets/cache/
+chmod 0777 frontend/assets/cache/
+chmod 0777 frontend/assets/files/
+chmod 0777 frontend/assets/gallery/
+chmod 0777 apps/extensions/
+chmod 0777 apps/common/runtime/
+chmod 0777 apps/common/runtime/mutex
+```
+
+> Note: `0777` is acceptable for local development only.  
+> In production, permissions should be restricted to the web server user.
+
+---
+
+### Database Error on First Visit
+
+If you visit:
+
+```
+http://localhost:8080
+```
+
+And see a database connection error, this is **expected** on first boot.
+
+MailWizz has not been installed yet, so no database configuration exists.
+
+---
+
+### ✅ Run the Installer
+
+Navigate to:
+
+```
+http://localhost:8080/install/
+```
+
+Complete the installer steps using:
+
+- Database Host: `mailwizz-mysql`
+- Database Name: `mailwizz`
+- Username: `mailwizz`
+- Password: `mailwizzpassword`
+
+After installation completes, the application will connect properly.
+
+---
+
+### Important: Use HTTP (Not HTTPS)
+
+SSL has not been enabled in the development environment.
+
+Ensure you are using:
+
+```
+http://localhost:8080
+```
+
+NOT:
+
+```
+https://localhost:8080
+```
+
+Attempting to use HTTPS will fail because no TLS certificates are configured in the local nginx container.
+
+---
+
+### 🧠 Why This Happens
+
+MailWizz:
+- Requires writable runtime directories
+- Does not ship with a preconfigured database connection
+- Must be installed via the `/install` endpoint before use
+
+These steps are part of the normal MailWizz initialization process.
+
+---
+
 # 📜 6. Viewing Logs
 
 View all services:
