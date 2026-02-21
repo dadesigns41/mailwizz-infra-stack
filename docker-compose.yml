@@ -1,7 +1,6 @@
 version: "3.9"
 
 services:
-
   mailwizz-mysql:
     image: mysql:8.0
     container_name: mailwizz-mysql
@@ -13,8 +12,10 @@ services:
       MYSQL_PASSWORD: mailwizzpassword
     volumes:
       - mailwizz_mysql_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
+    # Local-first: avoid host port conflicts unless you truly need it on the host.
+    # If you need host access, use "3307:3306" instead of "3306:3306".
+    # ports:
+    #   - "3307:3306"
 
   mailwizz-redis:
     image: redis:7-alpine
@@ -41,11 +42,10 @@ services:
       - mailwizz-mailhog
     volumes:
       - ./web:/var/www/web
+    # Local-first: remove the phpdockerio-specific env vars. Your Dockerfile controls PHP modules.
+    # Keep only what your app truly consumes.
     environment:
-      PHP_php5enmod: "bcmath gd gmp intl ldap mbstring mysqli pcntl pdo_mysql zip"
-      PHP__post_max_size: "128M"
-      PHP__upload_max_filesize: "128M"
-      PHP__memory_limit: "256M"
+      TZ: America/New_York
 
   mailwizz-webserver:
     image: nginx:1.26-alpine
@@ -55,11 +55,15 @@ services:
       - mailwizz-php
     volumes:
       - ./web:/var/www/web
-      - ./ssl:/etc/nginx/ssl
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - "80:80"
-      - "443:443"
+      # Local-first: map to 8080 so you don't need sudo and don't collide with anything already on :80
+      - "8080:80"
+    # Local-first: no SSL yet
+    # volumes:
+    #   - ./ssl:/etc/nginx/ssl
+    # ports:
+    #   - "443:443"
 
   mailwizz-phpmyadmin:
     image: phpmyadmin:5
