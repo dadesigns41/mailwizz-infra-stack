@@ -40,3 +40,31 @@
 docker compose up --build -d
 docker compose logs -f
 docker exec -it mailwizz-php bash
+```
+---
+
+## Session 2 — First Successful Container Run & Permission Fix
+### 02/21/2026
+
+- Resolved Docker daemon permission error (`/var/run/docker.sock`)
+- Added Linux user `dadesigns41` to the `docker` group
+- Verified Docker daemon access with `docker ps`
+- Successfully built and started full MailWizz stack with:
+  - `docker compose up --build`
+- Confirmed all containers running:
+  - `mailwizz-php`
+  - `mailwizz-mysql`
+  - `mailwizz-webserver`
+  - `mailwizz-mailhog`
+  - `mailwizz-redis`
+  - `mailwizz-phpmyadmin`
+- Verified port mappings:
+  - MailWizz → `http://localhost:8080`
+  - phpMyAdmin → `http://localhost:8081`
+  - MailHog → `http://localhost:8025`
+- Confirmed MySQL 8.0 initialized successfully and ready for connections
+- Established understanding of when to use `docker compose up` vs `--build`
+- Confirmed stack lifecycle workflow:
+  - First run → `docker compose up --build -d`
+  - Normal restart → `docker compose up -d`
+  - Stop → `docker compose down`
